@@ -22,11 +22,11 @@ public class User
     public User() {
     }
 
-    public User(String name, String email, String passwordHash, Role role) {
+    public User(String name, String email, String passwordHash) {
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = role;
+        this.role = Role.Player;
     }
 
     public Long getId() {
