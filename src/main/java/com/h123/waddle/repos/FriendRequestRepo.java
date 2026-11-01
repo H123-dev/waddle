@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface FriendRequestRepo  extends JpaRepository<FriendRequest,Long> {
 
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM friend_requests WHERE (sender_id = :senderId AND receiver_id = :receiverId) OR (sender_id = :receiverId AND receiver_id = :senderId))", nativeQuery = true)
-    boolean isIn(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
+    @Query(value = "SELECT * FROM friend_requests WHERE (sender_id = :senderId AND receiver_id = :receiverId) OR (sender_id = :receiverId AND receiver_id = :senderId)", nativeQuery = true)
+    Optional<FriendRequest> isIn(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
 
     @Query(value = "SELECT * FROM friend_requests WHERE (sender_id =:id OR receiver_id = :id) AND state = 'Accepted'", nativeQuery = true)
     List<FriendRequest> getFriends(@Param("id") Long id);

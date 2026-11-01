@@ -1,0 +1,15 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/requests/matchrequest/create
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name":"test1"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_08li}}"
+order: 8000

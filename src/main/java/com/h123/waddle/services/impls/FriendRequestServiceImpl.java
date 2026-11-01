@@ -46,7 +46,7 @@ public class FriendRequestServiceImpl implements RequestService {
         if(senderId.equals(receiver.getId()))
             throw new ResourceConflictException("cant befriend yourself");
         User sender = userRepo.findById(senderId).get();
-        if(friendRequestRepo.isIn(senderId,receiver.getId()))
+        if(friendRequestRepo.isIn(senderId,receiver.getId()).isPresent())
             throw new ResourceConflictException("a request of this kind has already been sent to this user or have been sent from that user to you");
         FriendRequest req = new FriendRequest(sender,receiver);
         friendRequestRepo.save(req);

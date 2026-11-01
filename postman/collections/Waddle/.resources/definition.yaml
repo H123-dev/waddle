@@ -6,3 +6,18 @@ variables:
   - key: json_web_token_0lha
     secret: true
     disabled: false
+  - key: json_web_token_0bey
+    secret: true
+    disabled: false
+  - key: json_web_token_0inm
+    secret: true
+    disabled: false
+  - key: json_web_token_1auc
+    secret: true
+    disabled: false
+  - key: json_web_token_0yfg
+    secret: true
+    disabled: false
+  - key: json_web_token_08li
+    secret: true
+    disabled: false

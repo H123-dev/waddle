@@ -6,10 +6,10 @@ body:
   type: json
   content: |-
     {
-        "name" : "bob1"
+        "name" : "bob"
     }
 auth:
   type: bearer
   credentials:
-    token: "{{token}}"
+    token: "{{json_web_token_0yfg}}"
 order: 1000

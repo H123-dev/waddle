@@ -7,7 +7,7 @@ body:
   content: |-
     
     {
-      "email": "reale1mail@gmail.com",
+      "email": "test@gmail.com",
       "name": "bob1",
       "password": "realpass"
     }

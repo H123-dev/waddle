@@ -1,0 +1,8 @@
+$kind: http-request
+description: ""
+url: " http://localhost:8080/waddle/requests/matchrequest/answer"
+method: POST
+body:
+  type: json
+  content: ""
+order: 9000

@@ -4,5 +4,13 @@ url: http://localhost:8080/waddle/requests/friendrequest/answer
 method: POST
 body:
   type: json
-  content: ""
+  content: |-
+    {
+        "ans" : "Rejected",
+        "id" : "4" 
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_1auc}}"
 order: 4000

@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/requests/matchrequest/outgoing
+method: GET
+order: 11000
