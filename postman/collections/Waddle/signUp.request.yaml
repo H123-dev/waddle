@@ -1,0 +1,14 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/auth/signup
+method: POST
+body:
+  type: json
+  content: |-
+    
+    {
+      "email": "reale1mail@gmail.com",
+      "name": "bob1",
+      "password": "realpass"
+    }
+order: 3000

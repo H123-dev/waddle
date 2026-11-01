@@ -1,0 +1,13 @@
+$kind: http-request
+name: signIn
+description: ""
+url: http://localhost:8080/waddle/auth/signin
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "email": "reale1mail@gmail.com",
+      "password": "realpass"
+    }
+order: 2000

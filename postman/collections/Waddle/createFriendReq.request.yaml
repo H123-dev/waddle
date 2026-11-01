@@ -1,0 +1,15 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/requests/friendrequest/create
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name" : "bob1"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+order: 1000

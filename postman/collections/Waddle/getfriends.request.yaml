@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/requests/friendrequest/friends
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0lha}}"
+order: 5000

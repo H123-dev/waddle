@@ -3,28 +3,32 @@ package com.h123.waddle.entities;
 import com.h123.waddle.entities.enums.ReqState;
 import jakarta.persistence.*;
 
+import java.time.Instant;
+
 @MappedSuperclass
 public abstract class Request
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
+
+    protected Instant answerTime;
+
+    @ManyToOne
+    protected User sender;
 
 
     @ManyToOne
-    private User sender;
-
-
-    @ManyToOne
-    private User receiver;
+    protected User receiver;
 
     @Enumerated(EnumType.STRING)
-    private ReqState state;
+    protected ReqState state;
 
     public Request(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
         this.state = ReqState.Pending;
+        this.answerTime = null;
     }
 
     public Request() {
@@ -44,6 +48,14 @@ public abstract class Request
 
     public ReqState getState() {
         return state;
+    }
+
+    public Instant getAnswerTime() {
+        return answerTime;
+    }
+
+    public void setAnswerTime(Instant answerTime) {
+        this.answerTime = answerTime;
     }
 
     public void setState(ReqState state) {
