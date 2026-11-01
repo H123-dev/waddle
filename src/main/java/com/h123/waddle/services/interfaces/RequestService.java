@@ -11,5 +11,5 @@ public interface RequestService {
     public RequestOutDto answerRequest(Long receiver , RequestAnsDto requestAnsDto);
     public List<RequestOutDto> getAllIncoming(Long userId);
     public List<RequestOutDto> getAllOutgoing(Long userId);
-
+    public void deleteOldRejected();
 }

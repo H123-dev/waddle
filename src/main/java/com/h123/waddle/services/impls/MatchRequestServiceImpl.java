@@ -15,11 +15,14 @@ import com.h123.waddle.repos.FriendRequestRepo;
 import com.h123.waddle.repos.MatchRequestRepo;
 import com.h123.waddle.repos.UserRepo;
 import com.h123.waddle.services.interfaces.RequestService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -91,5 +94,11 @@ public class MatchRequestServiceImpl implements RequestService {
         return all.stream()
                 .map(req -> RequestMapper.requestToReqOutDto(req))
                 .toList();
+    }
+
+    @Override
+    @Scheduled(fixedRate = 1,timeUnit = TimeUnit.HOURS)
+    public void deleteOldRejected() {
+        matchRequestRepo.delAllRejected(Instant.now().minus(2, ChronoUnit.HOURS));
     }
 }
