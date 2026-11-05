@@ -4,6 +4,7 @@ import com.h123.waddle.dtos.RequestAnsDto;
 import com.h123.waddle.dtos.RequestInDto;
 import com.h123.waddle.dtos.RequestOutDto;
 import com.h123.waddle.entities.FriendRequest;
+import com.h123.waddle.entities.Match;
 import com.h123.waddle.entities.MatchRequest;
 import com.h123.waddle.entities.User;
 import com.h123.waddle.entities.enums.ReqState;
@@ -12,11 +13,14 @@ import com.h123.waddle.exceptions.ResourceConflictException;
 import com.h123.waddle.exceptions.ResourceNotFoundException;
 import com.h123.waddle.mappers.RequestMapper;
 import com.h123.waddle.repos.FriendRequestRepo;
+import com.h123.waddle.repos.MatchRepo;
 import com.h123.waddle.repos.MatchRequestRepo;
 import com.h123.waddle.repos.UserRepo;
+import com.h123.waddle.services.interfaces.GameService;
 import com.h123.waddle.services.interfaces.RequestService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -32,11 +36,13 @@ public class MatchRequestServiceImpl implements RequestService {
     private final MatchRequestRepo matchRequestRepo;
     private final FriendRequestRepo friendRequestRepo;
     private final UserRepo userRepo;
+    private final GameService gameService;
 
-    public MatchRequestServiceImpl(MatchRequestRepo matchRequestRepo, FriendRequestRepo friendRequestRepo, UserRepo userRepo) {
+    public MatchRequestServiceImpl(MatchRequestRepo matchRequestRepo, FriendRequestRepo friendRequestRepo, UserRepo userRepo, GameService gameService) {
         this.matchRequestRepo = matchRequestRepo;
         this.friendRequestRepo = friendRequestRepo;
         this.userRepo = userRepo;
+        this.gameService = gameService;
     }
 
     @Override
@@ -59,6 +65,7 @@ public class MatchRequestServiceImpl implements RequestService {
         return RequestMapper.requestToReqOutDto(request);
     }
 
+    @Transactional
     @Override
     public RequestOutDto answerRequest(Long receiver, RequestAnsDto requestAnsDto)throws ResourceNotFoundException , ResourceConflictException , ForbiddenRequestException {
         Optional<MatchRequest> maybe = matchRequestRepo.findById(requestAnsDto.id());
@@ -71,11 +78,12 @@ public class MatchRequestServiceImpl implements RequestService {
             throw new ResourceConflictException("request is already answered for");
         ReqState state = ReqState.valueOf(requestAnsDto.ans());
         req.setState(state);
+        req.setAnswerTime(Instant.now());
         if(state==ReqState.Accepted)
         {
-            //todu : make the actual match
+            Match match = gameService.createGame(req);
+            req.setMatch(match);
         }
-        req.setAnswerTime(Instant.now());
         matchRequestRepo.save(req);
         return RequestMapper.requestToReqOutDto(req);
     }
@@ -101,4 +109,7 @@ public class MatchRequestServiceImpl implements RequestService {
     public void deleteOldRejected() {
         matchRequestRepo.delAllRejected(Instant.now().minus(2, ChronoUnit.HOURS));
     }
+
+
+
 }

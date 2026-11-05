@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.List;
 
 public interface MatchRequestRepo extends JpaRepository<MatchRequest,Long> {
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM match_requests WHERE (sender_id = :senderId AND receiver_id = :receiverId) OR (sender_id = :receiverId AND receiver_id = :senderId))", nativeQuery = true)
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM match_requests WHERE ((sender_id = :senderId AND receiver_id = :receiverId) OR (sender_id = :receiverId AND receiver_id = :senderId)))", nativeQuery = true)
     boolean isIn(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
 
     @Query(value = "SELECT * FROM match_requests WHERE receiver_id = :id AND state = 'Pending'", nativeQuery = true)
@@ -25,5 +25,13 @@ public interface MatchRequestRepo extends JpaRepository<MatchRequest,Long> {
     @Modifying
     @Query(value = "DELETE FROM match_requests WHERE state = 'Rejected' AND answer_time < :time", nativeQuery = true)
     void delAllRejected(@Param("time") Instant time);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM match_requests USING matches WHERE match_requests.match_id = matches.id AND matches.state = 'Finished'", nativeQuery = true)
+    void delAllDone();
+
+
+
 }
 
