@@ -32,6 +32,14 @@ public interface MatchRequestRepo extends JpaRepository<MatchRequest,Long> {
     void delAllDone();
 
 
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM match_requests WHERE id = :id AND state = 'Pending'", nativeQuery = true)
+    int delSpecial(@Param("id") Long id);
+
+
+
+
 
 }
 

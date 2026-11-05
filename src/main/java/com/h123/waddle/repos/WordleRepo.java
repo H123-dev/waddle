@@ -16,5 +16,6 @@ public interface WordleRepo extends JpaRepository<Wordle,Long> {
     @Query(value = "SELECT * FROM wordles WHERE match_id =:matchID", nativeQuery = true)
     List<Wordle> getWordles(@Param("matchID") Long matchID);
 
-
+    @Query(value = "SELECT * FROM wordles WHERE match_id =:matchID AND player_id = :otherID", nativeQuery = true)
+    Wordle getCrr(@Param("matchID") Long matchID , @Param("otherID") Long otherID);
 }

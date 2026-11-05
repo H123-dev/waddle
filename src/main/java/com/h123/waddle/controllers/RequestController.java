@@ -78,7 +78,12 @@ public class RequestController {
     @PostMapping("/matchrequest/create")
     public ResponseEntity<RequestOutDto> createMatchRequest(@AuthenticationPrincipal Long userId , @RequestBody @Valid RequestInDto requestInDto)
     {
-        RequestOutDto out = matchRequestServiceImpl.sendRequest(userId,requestInDto);
+        RequestOutDto out = null;
+        try {
+            out = matchRequestServiceImpl.sendRequest(userId,requestInDto);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(out,HttpStatus.CREATED);
     }
 

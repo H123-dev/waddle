@@ -8,7 +8,12 @@ import java.util.Optional;
 public class RequestMapper {
     public static RequestOutDto requestToReqOutDto(Request r)
     {
-        return new RequestOutDto(r.getId(),r.getSender().getName(),r.getReceiver().getName() , r.getState().toString());
+        return new RequestOutDto(r.getId(),r.getSender().getName(),r.getReceiver().getName() , r.getState().toString() , Optional.empty());
+    }
+
+    public static RequestOutDto requestToReqOutDto(Request r , Long id)
+    {
+        return new RequestOutDto(r.getId(),r.getSender().getName(),r.getReceiver().getName() , r.getState().toString() , Optional.of(id));
     }
 
 }

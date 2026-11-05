@@ -3,25 +3,21 @@ package com.h123.waddle.services.impls;
 import com.h123.waddle.dtos.RequestAnsDto;
 import com.h123.waddle.dtos.RequestInDto;
 import com.h123.waddle.dtos.RequestOutDto;
-import com.h123.waddle.entities.FriendRequest;
-import com.h123.waddle.entities.Match;
-import com.h123.waddle.entities.MatchRequest;
-import com.h123.waddle.entities.User;
+import com.h123.waddle.entities.*;
+import com.h123.waddle.entities.enums.GameState;
 import com.h123.waddle.entities.enums.ReqState;
 import com.h123.waddle.exceptions.ForbiddenRequestException;
 import com.h123.waddle.exceptions.ResourceConflictException;
 import com.h123.waddle.exceptions.ResourceNotFoundException;
 import com.h123.waddle.mappers.RequestMapper;
-import com.h123.waddle.repos.FriendRequestRepo;
-import com.h123.waddle.repos.MatchRepo;
-import com.h123.waddle.repos.MatchRequestRepo;
-import com.h123.waddle.repos.UserRepo;
+import com.h123.waddle.repos.*;
 import com.h123.waddle.services.interfaces.GameService;
 import com.h123.waddle.services.interfaces.RequestService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -37,17 +33,18 @@ public class MatchRequestServiceImpl implements RequestService {
     private final FriendRequestRepo friendRequestRepo;
     private final UserRepo userRepo;
     private final GameService gameService;
+    private final WordleRepo wordleRepo;
 
-    public MatchRequestServiceImpl(MatchRequestRepo matchRequestRepo, FriendRequestRepo friendRequestRepo, UserRepo userRepo, GameService gameService) {
+    public MatchRequestServiceImpl(MatchRequestRepo matchRequestRepo, FriendRequestRepo friendRequestRepo, UserRepo userRepo, GameService gameService, WordleRepo wordleRepo) {
         this.matchRequestRepo = matchRequestRepo;
         this.friendRequestRepo = friendRequestRepo;
         this.userRepo = userRepo;
         this.gameService = gameService;
+        this.wordleRepo = wordleRepo;
     }
 
     @Override
-    public RequestOutDto sendRequest(Long senderId, RequestInDto requestInDto) throws ResourceNotFoundException, ResourceConflictException , ForbiddenRequestException
-    {
+    public RequestOutDto sendRequest(Long senderId, RequestInDto requestInDto) throws ResourceNotFoundException, ResourceConflictException, ForbiddenRequestException, InterruptedException {
         Optional<User> receiverMaybe =  userRepo.findByName(requestInDto.name());
         if(receiverMaybe.isEmpty())
             throw new ResourceNotFoundException("user not found");
@@ -61,7 +58,30 @@ public class MatchRequestServiceImpl implements RequestService {
         if(matchRequestRepo.isIn(senderId,receiver.getId()))
             throw new ResourceConflictException("a request of this kind has already been sent to this user or have been sent from that user to you");
         MatchRequest request = new MatchRequest(sender,receiver);
-        matchRequestRepo.save(request);
+        request = matchRequestRepo.save(request);
+        Instant getTo = Instant.now().plus(Duration.ofMinutes(2));
+        while(Instant.now().isBefore(getTo)) {
+            request = matchRequestRepo.findById(request.getId()).get();
+            if (request.getState().equals(ReqState.Accepted)) {
+                Wordle w = wordleRepo.getCrr(request.getMatch().getId(), senderId);
+                return RequestMapper.requestToReqOutDto(request, w.getId());
+            }
+            else if (request.getState().equals(ReqState.Rejected))
+                break;
+            TimeUnit.SECONDS.sleep(1);
+        }
+        int is = matchRequestRepo.delSpecial(request.getId());
+        if(is==0)
+        {
+            request = matchRequestRepo.findById(request.getId()).get();
+            if (request.getState().equals(ReqState.Accepted)) {
+                Wordle w = wordleRepo.getCrr(request.getMatch().getId(), senderId);
+                return RequestMapper.requestToReqOutDto(request, w.getId());
+            }
+            else
+                return RequestMapper.requestToReqOutDto(request);
+        }
+        request.setState(ReqState.Rejected);
         return RequestMapper.requestToReqOutDto(request);
     }
 
@@ -83,6 +103,9 @@ public class MatchRequestServiceImpl implements RequestService {
         {
             Match match = gameService.createGame(req);
             req.setMatch(match);
+            matchRequestRepo.save(req);
+            Wordle w = wordleRepo.getCrr(match.getId(),receiver);
+            return RequestMapper.requestToReqOutDto(req,w.getId());
         }
         matchRequestRepo.save(req);
         return RequestMapper.requestToReqOutDto(req);

@@ -89,7 +89,7 @@ public class GameServiceImpl implements GameService {
         Match match = new Match(word);
         Wordle w1 = new Wordle(matchRequest.getSender(),match);
         Wordle w2 = new Wordle(matchRequest.getReceiver(),match);
-        matchRepo.save(match);
+        match = matchRepo.save(match);
         wordleRepo.save(w1);
         wordleRepo.save(w2);
         return match;
