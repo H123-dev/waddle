@@ -133,6 +133,9 @@ public class MatchRequestServiceImpl implements RequestService {
         matchRequestRepo.delAllRejected(Instant.now().minus(2, ChronoUnit.HOURS));
     }
 
-
+    @Scheduled(fixedRate = 6,timeUnit = TimeUnit.MINUTES)
+    public void delAllStuck() {
+        matchRequestRepo.delAllStuck();
+    }
 
 }

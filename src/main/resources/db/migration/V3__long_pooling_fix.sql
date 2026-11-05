@@ -1,0 +1,2 @@
+ALTER TABLE match_requests
+ADD sent_time TIMESTAMPTZ

@@ -28,9 +28,14 @@ public interface MatchRequestRepo extends JpaRepository<MatchRequest,Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM match_requests USING matches WHERE match_requests.match_id = matches.id AND matches.state = 'Finished'", nativeQuery = true)
+    @Query(value = "DELETE FROM match_requests USING matches WHERE (match_requests.match_id = matches.id AND matches.state = 'Finished')  ", nativeQuery = true)
     void delAllDone();
 
+
+    @Transactional
+    @Modifying
+    @Query(value = " DELETE FROM match_requests WHERE (sent_time + INTERVAL '2 minutes' < NOW() AND state ='Pending') ", nativeQuery = true)
+    void delAllStuck();
 
     @Transactional
     @Modifying
