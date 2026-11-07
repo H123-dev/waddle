@@ -1,5 +1,6 @@
 package com.h123.waddle.security;
 
+import com.h123.waddle.repos.UserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,13 +23,16 @@ public class SecurityConfig {
     public  PasswordEncoder creatBcrypt(){return new BCryptPasswordEncoder();}
 
     @Bean
-    public SecurityFilterChain createFilters(HttpSecurity httpSecurity , JwtUtil jwtUtil) throws Exception
+    public SecurityFilterChain createFilters(HttpSecurity httpSecurity , JwtUtil jwtUtil , UserRepo userRepo) throws Exception
     {
         try {
             return httpSecurity
                     .csrf(s-> s.disable())
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests(a -> a.requestMatchers("/waddle/auth/**").permitAll().anyRequest().authenticated())
+                    .authorizeHttpRequests(a ->
+                            a.requestMatchers("/waddle/auth/**").permitAll()
+                                    .requestMatchers("/waddle/admin/**").access(new RoleAuth(userRepo))
+                                    .anyRequest().authenticated())
                     .addFilterBefore(new TokenFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                     .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                     .build();
