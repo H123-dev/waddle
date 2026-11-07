@@ -1,0 +1,15 @@
+$kind: http-request
+description: ""
+url: http://localhost:8080/waddle/admin/word
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "word":"a1234"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0k1g}}"
+order: 12000
