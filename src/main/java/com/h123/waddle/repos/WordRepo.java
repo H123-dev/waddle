@@ -13,4 +13,6 @@ public interface WordRepo extends JpaRepository<Word,Long> {
     Word getRandomWord();
 
     Optional<Word> findByWord(String word);
+
+    boolean existsByWord(String word);
 }

@@ -7,6 +7,7 @@ import com.h123.waddle.entities.*;
 import com.h123.waddle.entities.enums.GameState;
 import com.h123.waddle.entities.enums.LetterPlacement;
 import com.h123.waddle.entities.enums.Result;
+import com.h123.waddle.exceptions.BadEntryException;
 import com.h123.waddle.exceptions.ForbiddenRequestException;
 import com.h123.waddle.exceptions.ResourceNotFoundException;
 import com.h123.waddle.repos.*;
@@ -40,7 +41,9 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
-    public GuessOutDto makeGuess(GuessInDto guessInDto , Long userID) throws ResourceNotFoundException , ForbiddenRequestException {
+    public GuessOutDto makeGuess(GuessInDto guessInDto , Long userID) throws ResourceNotFoundException , ForbiddenRequestException , BadEntryException {
+        if(!wordRepo.existsByWord(guessInDto.g()))
+            throw new BadEntryException("not a real word");
         Optional<Wordle> maybe = wordleRepo.findById(guessInDto.waddleID());
         if(maybe.isEmpty())
             throw new ResourceNotFoundException("game not found");
