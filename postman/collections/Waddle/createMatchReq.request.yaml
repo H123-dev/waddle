@@ -6,10 +6,10 @@ body:
   type: json
   content: |-
     {
-        "name":"test1"
+        "name":"Player1"
     }
 auth:
   type: bearer
   credentials:
-    token: "{{json_web_token_08li}}"
+    token: "{{json_web_token_01tz}}"
 order: 8000

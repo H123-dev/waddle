@@ -6,10 +6,10 @@ body:
   type: json
   content: |-
     {
-        "word":"a1234"
+        "word":"CRAZY"
     }
 auth:
   type: bearer
   credentials:
-    token: "{{json_web_token_0k1g}}"
+    token: "{{json_web_token_0qdp}}"
 order: 12000

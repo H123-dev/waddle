@@ -1,0 +1,16 @@
+$kind: http-request
+description: ""
+url: " http://localhost:8080/waddle/game/guess"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "g": "SLATE",
+        "waddleID": "4"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_144v}}"
+order: 13000

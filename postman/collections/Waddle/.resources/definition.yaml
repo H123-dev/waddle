@@ -27,3 +27,12 @@ variables:
   - key: json_web_token_0k1g
     secret: true
     disabled: false
+  - key: json_web_token_0qdp
+    secret: true
+    disabled: false
+  - key: json_web_token_01tz
+    secret: true
+    disabled: false
+  - key: json_web_token_144v
+    secret: true
+    disabled: false

@@ -188,8 +188,10 @@ public class GameServiceImpl implements GameService {
                 {
                     if(wordle.getState().equals(GameState.InProgress)) {
                         wordle.setState(GameState.Finished);
-                        wordleRepo.save(wordle);
                     }
+                    if(wordle.getFinishTime()==null)
+                        wordle.setFinishTime(match.getDeadLine());
+                    wordleRepo.save(wordle);
                 }
         );
         match.setState(GameState.Finished);

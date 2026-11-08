@@ -1,0 +1,9 @@
+$kind: http-request
+description: ""
+url: " http://localhost:8080/waddle/game/status/4"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_144v}}"
+order: 14000
