@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/waddle/admin")
@@ -27,5 +24,11 @@ public class AdminController {
     {
         adminService.addWord(word);
         return new ResponseEntity<>(word, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<Void> adminCheck()
+    {
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
