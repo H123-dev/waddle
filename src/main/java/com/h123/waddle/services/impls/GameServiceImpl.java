@@ -3,12 +3,14 @@ package com.h123.waddle.services.impls;
 import com.h123.waddle.dtos.GuessInDto;
 import com.h123.waddle.dtos.GuessOutDto;
 import com.h123.waddle.dtos.GuessTuple;
+import com.h123.waddle.dtos.WordleStatusDto;
 import com.h123.waddle.entities.*;
 import com.h123.waddle.entities.enums.GameState;
 import com.h123.waddle.entities.enums.LetterPlacement;
 import com.h123.waddle.entities.enums.Result;
 import com.h123.waddle.exceptions.BadEntryException;
 import com.h123.waddle.exceptions.ForbiddenRequestException;
+import com.h123.waddle.exceptions.ResourceConflictException;
 import com.h123.waddle.exceptions.ResourceNotFoundException;
 import com.h123.waddle.repos.*;
 import com.h123.waddle.services.interfaces.GameService;
@@ -98,6 +100,21 @@ public class GameServiceImpl implements GameService {
         return match;
     }
 
+    @Override
+    public WordleStatusDto getStatus(Long playerID, Long wordleID) throws ResourceNotFoundException , ForbiddenRequestException
+    {
+        Optional<Wordle> maybe = wordleRepo.findById(wordleID);
+        if(maybe.isEmpty())
+            throw new ResourceNotFoundException("wordle not found");
+        Wordle w = maybe.get();
+        if(!w.getPlayer().getId().equals(playerID))
+            throw new ForbiddenRequestException("not ur game");
+        Wordle other = wordleRepo.getOther(w.getMatch().getId(),wordleID);
+        if(w.getMatch().getState().equals(GameState.Finished))
+            return new WordleStatusDto(w.getMatch().getState(),w.getProgress(),other.getProgress(),w.getMatch().getDeadLine(),Optional.ofNullable(w.getResult()),Optional.of(w.getMatch().getWord().getWord()));
+        return new WordleStatusDto(w.getMatch().getState(),w.getProgress(),other.getProgress(),w.getMatch().getDeadLine(),Optional.empty(),Optional.empty());
+    }
+
     public void updateDeadline(Wordle wordle)
     {
         Wordle other = wordleRepo.getOther(wordle.getMatch().getId(),wordle.getId());
@@ -107,20 +124,18 @@ public class GameServiceImpl implements GameService {
             Wordle winner = findWinner(match);
             if(winner==null)
             {
-                wordle.setResult(Result.TIE);
-                other.setResult(Result.TIE);
+                wordleRepo.getWordles(match.getId()).forEach(
+                        w -> {
+                            w.setResult(Result.TIE);
+                            wordleRepo.save(w);
+                        }
+                );
+                return;
             }
-            else
-            {
-                winner.setResult(Result.WIN);
-                if(winner.getId().equals(wordle.getId()))
-                {
-                    other.setResult(Result.LOSE);
-                }
-                else
-                    wordle.setResult(Result.LOSE);
-            }
-            wordleRepo.save(wordle);
+            other = wordleRepo.getOther(match.getId(),winner.getId());
+            winner.setResult(Result.WIN);
+            other.setResult(Result.LOSE);
+            wordleRepo.save(winner);
             wordleRepo.save(other);
             return;
         }
