@@ -3,7 +3,7 @@
 A 1v1 Wordle battle game. 
 Backend in Java / Spring Boot, with JWT auth, PostgreSQL and a small browser UI.
 
-**Live:** [waddle-production-6f43.up.railway.app](https://waddle-production-6f43.up.railway.app) · **API docs:** [/swagger-ui.html](https://waddle-production-6f43.up.railway.app/swagger-ui.html)
+**Live:** [here](https://waddle-production-6f43.up.railway.app) · **API docs:** [here](https://waddle-production-6f43.up.railway.app/swagger-ui.html)
 
 ## Features
 - Sign up / sign in with JWT authentication (passwords hashed with BCrypt)
