@@ -8,6 +8,7 @@ class WaddleApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }

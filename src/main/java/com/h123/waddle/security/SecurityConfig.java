@@ -30,7 +30,7 @@ public class SecurityConfig {
                     .csrf(s-> s.disable())
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(a ->
-                            a.requestMatchers("/waddle/auth/**", "/error" ,  "/", "/index.html", "/style.css" ,  "/app.js").permitAll()
+                            a.requestMatchers("/waddle/auth/**", "/error" ,  "/", "/index.html", "/style.css" ,  "/app.js" , "/v3/api-docs/**" , "/swagger-ui.html", "/swagger-ui/**").permitAll()
                                     .requestMatchers("/waddle/admin/**").access(new RoleAuth(userRepo))
                                     .anyRequest().authenticated())
                     .addFilterBefore(new TokenFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
